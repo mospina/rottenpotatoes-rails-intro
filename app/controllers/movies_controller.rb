@@ -11,8 +11,13 @@ class MoviesController < ApplicationController
   end
 
   def index
+    @all_ratings = Movie.all_ratings
     @order_by = params[:order_by]
-    @movies = Movie.order(@order_by)
+    @movies = Movie.with_ratings(rating_params).order(@order_by)
+  end
+  
+  def rating_params
+    params.key?(:ratings) ? params[:ratings].keys : nil
   end
 
   def new

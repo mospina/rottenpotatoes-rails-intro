@@ -12,17 +12,30 @@ RSpec.describe :movies, type: :request do
       Movie.create(title: 'B movie',
                    rating: 'PG',
                    release_date: 3.months.ago)
+    end 
+    let(:movie_3) do
+      Movie.create(title: 'C movie',
+                   rating: 'R',
+                   release_date: 2.months.ago)
     end
+
+
 
     before do
       movie_1
       movie_2
+      movie_3
     end
 
     context 'when there is no sort parameters' do
       it 'return 200' do
         get(movies_path)
         expect(response).to be_successful
+      end
+      it 'include a filter by ratings form' do
+        get(movies_path)
+        expect(assigns(:all_ratings)).to include('PG')
+        expect(assigns(:all_ratings)).to include('R')
       end
     end
 
@@ -38,5 +51,13 @@ RSpec.describe :movies, type: :request do
         expect(assigns(:movies).first.title).to eq(movie_2.title)
       end
     end  
+    
+    context 'when there is a filter' do
+      it 'returns only match results' do
+        get(movies_path(ratings: {'PG' => '1'}))
+        expect(response).to be_successful
+        expect(assigns(:movies).length).to eq(2)
+      end
+    end
   end
 end          
