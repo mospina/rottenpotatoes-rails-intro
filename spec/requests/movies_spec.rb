@@ -58,6 +58,14 @@ RSpec.describe :movies, type: :request do
         expect(response).to be_successful
         expect(assigns(:movies).length).to eq(2)
       end
+      
+      it 'remeber the filters in following requests' do
+        get(movies_path(ratings: {'PG' => '1'}))
+        expect(response).to be_successful
+        get(movies_path)
+        expect(response).to be_successful
+        expect(assigns(:movies).length).to eq(2)
+      end
     end
   end
 end          

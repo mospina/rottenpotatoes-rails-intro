@@ -17,7 +17,8 @@ class MoviesController < ApplicationController
   end
   
   def rating_params
-    params.key?(:ratings) ? params[:ratings].keys : nil
+    @ratings = params.key?(:ratings) ? params[:ratings].keys : session[:ratings]
+    session[:ratings] = @ratings
   end
 
   def new
