@@ -43,8 +43,8 @@ class MoviesController < ApplicationController
     
   def redirect_query_string
     query_string = {}
-    query_string[:order_by] = order_by_params if session.key?(:order_by)
-    if session.key?(:ratings)
+    query_string[:order_by] = order_by_params if order_by_params.present?
+    if rating_params.present?
       query_string[:ratings] = rating_params.reduce({}) { |acc, i| acc.merge({ i => '1'}) } 
     end
     query_string
