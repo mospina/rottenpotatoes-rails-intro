@@ -50,6 +50,12 @@ RSpec.describe :movies, type: :request do
         expect(response).to be_successful
         expect(assigns(:movies).first.title).to eq(movie_2.title)
       end
+      it 'remember order by in the next request' do
+        get(movies_path(order_by: :release_date))
+        expect(response).to be_successful
+        get(movies_path)
+        expect(assigns(:movies).first.title).to eq(movie_2.title)
+      end
     end  
     
     context 'when there is a filter' do
