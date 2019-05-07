@@ -12,6 +12,12 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = Movie.all_ratings
+    if need_redirect?
+      redirect_to movies_path(redirect_query_string)
+      flash.keep
+      return
+    end
+
     @movies = Movie.with_ratings(rating_params).order(order_by_params)
   end
   
@@ -23,6 +29,25 @@ class MoviesController < ApplicationController
   def order_by_params
     @order_by = params.key?(:order_by) ? params[:order_by] : session[:order_by]
     session[:order_by] = @order_by
+  end
+
+  def need_redirect?
+    if !params.key?(:order_by) && session.key?(:order_by)
+      return true
+    elsif !params.key?(:ratings) && session.key?(:ratings)
+      return true
+    else
+      return false
+    end
+  end
+    
+  def redirect_query_string
+    query_string = {}
+    query_string[:order_by] = order_by_params if session.key?(:order_by)
+    if session.key?(:ratings)
+      query_string[:ratings] = rating_params.reduce({}) { |acc, i| acc.merge({ i => '1'}) } 
+    end
+    query_string
   end
 
   def new
